@@ -1,0 +1,59 @@
+# OS
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+*.tfvars.json
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+
+# Sensitive files
+*.pem
+*.key
+*.crt
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs and archives
+*.log
+*.log.*
+*.zip
+*.tar.gz
+
+# VS/IDE workspace folders
+.history/
+.vs/
+
+# Local system files
+Thumbs.db
+ehthumbs.db
+Icon?
