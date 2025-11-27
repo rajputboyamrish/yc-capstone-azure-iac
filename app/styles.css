@@ -1,0 +1,30 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+header {
+  background: #1e293b;
+  padding: 2rem;
+  text-align: center;
+}
+main {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+section {
+  background: #020617;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid #1f2937;
+}
+footer {
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid #334155;
+  margin-top: 2rem;
+  font-size: 0.8rem;
+}

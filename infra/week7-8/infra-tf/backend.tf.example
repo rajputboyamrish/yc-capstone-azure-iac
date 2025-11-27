@@ -1,0 +1,17 @@
+/*
+Example backend configuration for storing Terraform remote state in Azure Storage.
+
+Instructions: copy this file to backend.tf and update the values with your storage account and container.
+Make sure the storage account and container exist (and are accessible by the service principal used for CI) before running terraform init.
+
+Do NOT commit real credentials or secrets into source control.
+*/
+
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "<your-tfstate-rg>"
+    storage_account_name = "<your_tfstate_storage_account>"
+    container_name       = "tfstate"
+    key                  = "yc-capstone/terraform.tfstate"
+  }
+}

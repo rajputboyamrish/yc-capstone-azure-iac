@@ -1,0 +1,13 @@
+# Example Terraform variable values (do NOT commit real secrets)
+# Copy this file to `terraform.tfvars` and replace placeholders with real values
+
+subscription_id      = "00000000-0000-0000-0000-000000000000" # replace with your subscription id
+tenant_id            = "00000000-0000-0000-0000-000000000000" # replace with your tenant id
+kv_admin_object_id   = "00000000-0000-0000-0000-000000000000" # Object ID for Key Vault admin (or leave blank to use current principal)
+storage_account_name = "REPLACE_WITH_UNIQUE_STORAGE_NAME"
+key_vault_name       = "REPLACE_WITH_KV_NAME"
+budget_contact_email = "your-email@example.com"
+
+# Notes:
+# - This file is only an example. Keep your real `terraform.tfvars` out of source control.
+# - The repo `.gitignore` already ignores `*.tfvars`.
