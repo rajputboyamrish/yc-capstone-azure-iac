@@ -1,0 +1,104 @@
+name: Terraform + Deploy Static Website
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+  AZURE_STORAGE_ACCOUNT: ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    name: Terraform fmt / validate / plan
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform fmt & validate
+        working-directory: infra/week7-8/infra-tf
+        run: |
+          terraform fmt -check -recursive
+          terraform init
+          terraform validate
+
+      - name: Terraform plan
+        working-directory: infra/week7-8/infra-tf
+        run: |
+          terraform plan -out=tfplan
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: infra/week7-8/infra-tf/tfplan
+
+  apply:
+    needs: [plan]
+    runs-on: ubuntu-latest
+    # require manual approval in GitHub (set environment protection for 'production')
+    environment: production
+    name: Terraform apply + deploy static site
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform Init
+        working-directory: infra/week7-8/infra-tf
+        run: terraform init
+
+      - name: Terraform Apply (approved)
+        working-directory: infra/week7-8/infra-tf
+        run: terraform apply -auto-approve tfplan || terraform apply -auto-approve
+
+      - name: Ensure static website settings
+        run: |
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+          az storage blob service-properties update \
+            --account-name "$AZURE_STORAGE_ACCOUNT" \
+            --static-website \
+            --index-document index.html \
+            --404-document index.html \
+            --auth-mode login
+
+      - name: Upload static app to $web
+        run: |
+          az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
+          # use single-quoted '$web' so the az CLI uses the literal container name
+          az storage blob upload-batch \
+            --account-name "$AZURE_STORAGE_ACCOUNT" \
+            --destination '$web' \
+            --source "app" \
+            --auth-mode login
+
+      - name: Show static site URL
+        working-directory: infra/week7-8/infra-tf
+        run: terraform output static_website_url
+
